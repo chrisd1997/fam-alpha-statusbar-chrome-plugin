@@ -43,9 +43,13 @@ The bar only appears on pages that contain the build info script. On all other p
 ## Usage
 
 - The bar appears automatically on any page with build info
-- Click **↓/↑** to move the bar between the top and bottom of the page (your preference is saved)
+- Click **⚙** to open the settings popup:
+  - **Show Git details** — toggle branch and commit hash visibility (default: on)
+  - **Show Unknown items** — toggle fields with "unknown" values (default: off)
+  - **Bar Position** — move the bar to the top or bottom of the page (default: Top)
 - Click **×** to dismiss the bar for the current page
+- Sections are automatically hidden when all their fields are filtered out
 
 ## Permissions
 
-- **storage** — used to persist your top/bottom position preference
+- **storage** — used to persist your settings across sessions
