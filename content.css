@@ -1,0 +1,75 @@
+#build-info-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 12px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font: 12px/1.4 "SF Mono", "Fira Code", Consolas, monospace;
+}
+
+#build-info-bar.build-info-top {
+  top: 0;
+  bottom: auto;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+#build-info-bar.build-info-bottom {
+  top: auto;
+  bottom: 0;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.build-info-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.build-info-section strong {
+  color: #7ec8e3;
+  font-weight: 600;
+}
+
+.build-info-branch {
+  background: #2d4a22;
+  color: #a3d977;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.build-info-commit {
+  color: #c0a36e;
+  font-size: 11px;
+}
+
+.build-info-path {
+  color: #888;
+  font-size: 11px;
+}
+
+#build-info-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#build-info-controls button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+#build-info-controls button:hover {
+  color: #fff;
+}

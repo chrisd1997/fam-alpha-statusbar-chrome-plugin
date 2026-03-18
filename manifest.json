@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Build Info Bar",
+  "version": "1.0",
+  "description": "Displays build info from script#build-info as a bar at the top of the page.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage"],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
