@@ -13,6 +13,7 @@
     showGitDetails: true,
     showUnknown: false,
     buildInfoPosition: "top",
+    collapsed: false,
   };
 
   const bar = document.createElement("div");
@@ -87,6 +88,34 @@
     document.body.style.marginBottom = position === "bottom" ? bar.offsetHeight + "px" : "";
   }
 
+  // Collapsed pill (bottom-right corner)
+  const pill = document.createElement("button");
+  pill.id = "build-info-pill";
+  pill.title = "Show build info bar";
+  pill.style.display = "none";
+
+  function renderPill(settings) {
+    const coreBuild = data.CORE_BUILD;
+    const showBuild =
+      coreBuild && (settings.showUnknown || coreBuild.toLowerCase() !== "unknown");
+    pill.textContent = showBuild ? `ⓘ #${coreBuild}` : "ⓘ";
+  }
+
+  function applyCollapsed(collapsed, settings) {
+    if (collapsed) {
+      bar.style.display = "none";
+      pill.style.display = "";
+      document.body.style.marginTop = "";
+      document.body.style.marginBottom = "";
+    } else {
+      // Restore the bar before applyPosition: it reads bar.offsetHeight,
+      // which is 0 while the bar is display:none.
+      bar.style.display = "";
+      pill.style.display = "none";
+      applyPosition(settings.buildInfoPosition);
+    }
+  }
+
   // Controls
   const controls = document.createElement("span");
   controls.id = "build-info-controls";
@@ -128,21 +157,29 @@
   settingsWrapper.appendChild(gearBtn);
   settingsWrapper.appendChild(popup);
 
+  // Minimize button
+  const minBtn = document.createElement("button");
+  minBtn.textContent = "\u2014";
+  minBtn.title = "Collapse to corner";
+
   // Close button
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "\u00d7";
   closeBtn.title = "Hide build info bar";
   closeBtn.addEventListener("click", () => {
     bar.remove();
+    pill.remove();
     document.body.style.marginTop = "";
     document.body.style.marginBottom = "";
   });
 
   controls.appendChild(settingsWrapper);
+  controls.appendChild(minBtn);
   controls.appendChild(closeBtn);
   bar.appendChild(controls);
 
   document.body.prepend(bar);
+  document.body.appendChild(pill);
 
   // Load settings, bind controls, and render
   chrome.storage.local.get(DEFAULTS, (settings) => {
@@ -155,7 +192,20 @@
     positionSelect.value = settings.buildInfoPosition;
 
     renderSections(settings);
-    applyPosition(settings.buildInfoPosition);
+    renderPill(settings);
+    applyCollapsed(settings.collapsed, settings);
+
+    minBtn.addEventListener("click", () => {
+      settings.collapsed = true;
+      chrome.storage.local.set({ collapsed: true });
+      applyCollapsed(true, settings);
+    });
+
+    pill.addEventListener("click", () => {
+      settings.collapsed = false;
+      chrome.storage.local.set({ collapsed: false });
+      applyCollapsed(false, settings);
+    });
 
     showGitCheckbox.addEventListener("change", () => {
       settings.showGitDetails = showGitCheckbox.checked;
@@ -167,6 +217,7 @@
       settings.showUnknown = showUnknownCheckbox.checked;
       chrome.storage.local.set({ showUnknown: settings.showUnknown });
       renderSections(settings);
+      renderPill(settings);
     });
 
     positionSelect.addEventListener("change", () => {

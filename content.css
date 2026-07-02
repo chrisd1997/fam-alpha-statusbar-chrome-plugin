@@ -137,3 +137,24 @@
   accent-color: #7ec8e3;
   cursor: pointer;
 }
+
+/* Collapsed pill */
+#build-info-pill {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  z-index: 2147483647;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font: 12px/1.4 "SF Mono", "Fira Code", Consolas, monospace;
+  border: none;
+  border-radius: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+#build-info-pill:hover {
+  color: #fff;
+  background: #16213e;
+}
