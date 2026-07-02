@@ -14,6 +14,7 @@
     showUnknown: false,
     buildInfoPosition: "top",
     collapsed: false,
+    pillPosition: "bottom-right",
   };
 
   const bar = document.createElement("div");
@@ -116,6 +117,16 @@
     }
   }
 
+  function applyPillPosition(position) {
+    pill.classList.remove(
+      "pill-bottom-right",
+      "pill-bottom-left",
+      "pill-top-right",
+      "pill-top-left"
+    );
+    pill.classList.add(`pill-${position}`);
+  }
+
   // Controls
   const controls = document.createElement("span");
   controls.id = "build-info-controls";
@@ -139,6 +150,15 @@
       <select id="bi-position">
         <option value="top">Top</option>
         <option value="bottom">Bottom</option>
+      </select>
+    </label>
+    <label>
+      Pill Position
+      <select id="bi-pill-position">
+        <option value="bottom-right">Bottom Right</option>
+        <option value="bottom-left">Bottom Left</option>
+        <option value="top-right">Top Right</option>
+        <option value="top-left">Top Left</option>
       </select>
     </label>
   `;
@@ -186,14 +206,17 @@
     const showGitCheckbox = popup.querySelector("#bi-show-git");
     const showUnknownCheckbox = popup.querySelector("#bi-show-unknown");
     const positionSelect = popup.querySelector("#bi-position");
+    const pillPositionSelect = popup.querySelector("#bi-pill-position");
 
     showGitCheckbox.checked = settings.showGitDetails;
     showUnknownCheckbox.checked = settings.showUnknown;
     positionSelect.value = settings.buildInfoPosition;
+    pillPositionSelect.value = settings.pillPosition;
 
     renderSections(settings);
     renderPill(settings);
     applyCollapsed(settings.collapsed, settings);
+    applyPillPosition(settings.pillPosition);
 
     minBtn.addEventListener("click", () => {
       settings.collapsed = true;
@@ -224,6 +247,12 @@
       settings.buildInfoPosition = positionSelect.value;
       chrome.storage.local.set({ buildInfoPosition: settings.buildInfoPosition });
       applyPosition(settings.buildInfoPosition);
+    });
+
+    pillPositionSelect.addEventListener("change", () => {
+      settings.pillPosition = pillPositionSelect.value;
+      chrome.storage.local.set({ pillPosition: settings.pillPosition });
+      applyPillPosition(settings.pillPosition);
     });
   });
 })();

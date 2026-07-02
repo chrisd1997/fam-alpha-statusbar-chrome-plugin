@@ -141,8 +141,6 @@
 /* Collapsed pill */
 #build-info-pill {
   position: fixed;
-  bottom: 8px;
-  right: 8px;
   z-index: 2147483647;
   background: #1a1a2e;
   color: #e0e0e0;
@@ -158,3 +156,8 @@
   color: #fff;
   background: #16213e;
 }
+
+#build-info-pill.pill-bottom-right { bottom: 8px; right: 8px; }
+#build-info-pill.pill-bottom-left { bottom: 8px; left: 8px; }
+#build-info-pill.pill-top-right { top: 8px; right: 8px; }
+#build-info-pill.pill-top-left { top: 8px; left: 8px; }
