@@ -13,6 +13,8 @@
     showGitDetails: true,
     showUnknown: false,
     buildInfoPosition: "top",
+    collapsed: false,
+    pillPosition: "bottom-right",
   };
 
   const bar = document.createElement("div");
@@ -87,6 +89,46 @@
     document.body.style.marginBottom = position === "bottom" ? bar.offsetHeight + "px" : "";
   }
 
+  // Collapsed pill (bottom-right corner)
+  const pill = document.createElement("button");
+  pill.id = "build-info-pill";
+  pill.title = "Show build info bar";
+  pill.style.display = "none";
+
+  function renderPill(settings) {
+    const isVisible = (v) =>
+      v && (settings.showUnknown || v.toLowerCase() !== "unknown");
+    const builds = [data.CORE_BUILD, data.STRAMIEN_BUILD]
+      .filter(isVisible)
+      .map((b) => `#${b}`);
+    pill.textContent = builds.length ? `ⓘ ${builds.join(" / ")}` : "ⓘ";
+  }
+
+  function applyCollapsed(collapsed, settings) {
+    if (collapsed) {
+      bar.style.display = "none";
+      pill.style.display = "";
+      document.body.style.marginTop = "";
+      document.body.style.marginBottom = "";
+    } else {
+      // Restore the bar before applyPosition: it reads bar.offsetHeight,
+      // which is 0 while the bar is display:none.
+      bar.style.display = "";
+      pill.style.display = "none";
+      applyPosition(settings.buildInfoPosition);
+    }
+  }
+
+  function applyPillPosition(position) {
+    pill.classList.remove(
+      "pill-bottom-right",
+      "pill-bottom-left",
+      "pill-top-right",
+      "pill-top-left"
+    );
+    pill.classList.add(`pill-${position}`);
+  }
+
   // Controls
   const controls = document.createElement("span");
   controls.id = "build-info-controls";
@@ -112,6 +154,15 @@
         <option value="bottom">Bottom</option>
       </select>
     </label>
+    <label>
+      Pill Position
+      <select id="bi-pill-position">
+        <option value="bottom-right">Bottom Right</option>
+        <option value="bottom-left">Bottom Left</option>
+        <option value="top-right">Top Right</option>
+        <option value="top-left">Top Left</option>
+      </select>
+    </label>
   `;
 
   gearBtn.addEventListener("click", (e) => {
@@ -128,34 +179,58 @@
   settingsWrapper.appendChild(gearBtn);
   settingsWrapper.appendChild(popup);
 
+  // Minimize button
+  const minBtn = document.createElement("button");
+  minBtn.textContent = "\u2014";
+  minBtn.title = "Collapse to corner";
+
   // Close button
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "\u00d7";
   closeBtn.title = "Hide build info bar";
   closeBtn.addEventListener("click", () => {
     bar.remove();
+    pill.remove();
     document.body.style.marginTop = "";
     document.body.style.marginBottom = "";
   });
 
   controls.appendChild(settingsWrapper);
+  controls.appendChild(minBtn);
   controls.appendChild(closeBtn);
   bar.appendChild(controls);
 
   document.body.prepend(bar);
+  document.body.appendChild(pill);
 
   // Load settings, bind controls, and render
   chrome.storage.local.get(DEFAULTS, (settings) => {
     const showGitCheckbox = popup.querySelector("#bi-show-git");
     const showUnknownCheckbox = popup.querySelector("#bi-show-unknown");
     const positionSelect = popup.querySelector("#bi-position");
+    const pillPositionSelect = popup.querySelector("#bi-pill-position");
 
     showGitCheckbox.checked = settings.showGitDetails;
     showUnknownCheckbox.checked = settings.showUnknown;
     positionSelect.value = settings.buildInfoPosition;
+    pillPositionSelect.value = settings.pillPosition;
 
     renderSections(settings);
-    applyPosition(settings.buildInfoPosition);
+    renderPill(settings);
+    applyCollapsed(settings.collapsed, settings);
+    applyPillPosition(settings.pillPosition);
+
+    minBtn.addEventListener("click", () => {
+      settings.collapsed = true;
+      chrome.storage.local.set({ collapsed: true });
+      applyCollapsed(true, settings);
+    });
+
+    pill.addEventListener("click", () => {
+      settings.collapsed = false;
+      chrome.storage.local.set({ collapsed: false });
+      applyCollapsed(false, settings);
+    });
 
     showGitCheckbox.addEventListener("change", () => {
       settings.showGitDetails = showGitCheckbox.checked;
@@ -167,12 +242,19 @@
       settings.showUnknown = showUnknownCheckbox.checked;
       chrome.storage.local.set({ showUnknown: settings.showUnknown });
       renderSections(settings);
+      renderPill(settings);
     });
 
     positionSelect.addEventListener("change", () => {
       settings.buildInfoPosition = positionSelect.value;
       chrome.storage.local.set({ buildInfoPosition: settings.buildInfoPosition });
       applyPosition(settings.buildInfoPosition);
+    });
+
+    pillPositionSelect.addEventListener("change", () => {
+      settings.pillPosition = pillPositionSelect.value;
+      chrome.storage.local.set({ pillPosition: settings.pillPosition });
+      applyPillPosition(settings.pillPosition);
     });
   });
 })();
