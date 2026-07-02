@@ -37,9 +37,10 @@ plain-DOM + CSS-class style of the codebase.
   the bar's top/bottom position setting.
 - Same visual theme as the bar: `#1a1a2e` background, monospace font, light
   text, rounded corners, maximum z-index.
-- Content: `ⓘ #<CORE_BUILD>` (icon + Core build number). Falls back to the
-  icon alone when the Core build is missing, or is "unknown" while the
-  "Show Unknown items" setting is off.
+- Content: `ⓘ #<CORE_BUILD> / #<STRAMIEN_BUILD>` (icon + Core and Stramien
+  build numbers, e.g. `ⓘ #2041 / #2888`). Each build is omitted when it is
+  missing, or is "unknown" while the "Show Unknown items" setting is off;
+  the pill falls back to the icon alone when neither build is shown.
 - Tooltip: "Show build info bar".
 - Clicking the pill hides it, shows the bar, and restores the bar's body
   margin offset.

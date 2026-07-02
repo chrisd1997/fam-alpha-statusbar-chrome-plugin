@@ -96,10 +96,12 @@
   pill.style.display = "none";
 
   function renderPill(settings) {
-    const coreBuild = data.CORE_BUILD;
-    const showBuild =
-      coreBuild && (settings.showUnknown || coreBuild.toLowerCase() !== "unknown");
-    pill.textContent = showBuild ? `ⓘ #${coreBuild}` : "ⓘ";
+    const isVisible = (v) =>
+      v && (settings.showUnknown || v.toLowerCase() !== "unknown");
+    const builds = [data.CORE_BUILD, data.STRAMIEN_BUILD]
+      .filter(isVisible)
+      .map((b) => `#${b}`);
+    pill.textContent = builds.length ? `ⓘ ${builds.join(" / ")}` : "ⓘ";
   }
 
   function applyCollapsed(collapsed, settings) {
